@@ -9,6 +9,42 @@ from lxml import etree
 from Markable import *
 from FeatureVector import *
 
+def getNumber(markable):
+    if(markable.lemma.lower() in ["I", "me","he", "she", "it", "him", "her"]):
+        return "SINGULAR"
+
+    elif(markable.lemma.lower() in ["we","us", "they", "them"]):
+        return "PLURAL"
+
+    elif(markable.mention == markable.lemma):
+        return "SINGULAR"
+
+    elif(markable.mention.replace(markable.lemma,'') in ["s", "es"]):
+        return "PLURAL"
+
+    else:
+        return "UNKNOWN"
+
+
+def getGender(markable):
+    if (markable.lemma.lower() == "she"):
+        return "FEMALE"
+    elif (markable.lemma.lower()=="he"):
+        return "MALE"
+    elif (markable.lemma.lower()=="it"):
+        return "NEUTRAL"
+    elif (markable.semantic == "PERSON"):
+        if markable.mention.split()[0].lower() in ["mr.", "sir", "mister", "sr.", "lord"]:
+            return "MALE"
+        elif markable.mention.split()[0].lower() in ["mrs.", "miss", "lady", "ms."] :
+            return "FEMALE"
+        else:
+            return "NEUTRAL"
+    elif (markable.semantic == "0"):
+        return "UNKNOWN"
+    else:
+        return "NEUTRAL"
+
 def createMarkable(tree, mention):
     """
         Extract Mention information from the XML file to create a Markable Object
@@ -24,28 +60,32 @@ def createMarkable(tree, mention):
                                         int(mention.find("end").text),
                                         int(mention.find("head").text),
                                         int(mention.find("sentence").text),
+                                        head.find("lemma"),
                                         head.find("POS").text, head.find("NER").text)
+                    markable.number = getNumber(markable)
+                    markable.gender = getGender(markable)
 
                     return markable
 
 
-#Reading XML file as an argument
-#TODO : implementer la lecture d'argument correctement
-
-def main():
-
-    file = "Barack Obama"
-    mention_tree = etree.parse(r"../../data/WikiCoref/Output/Dcoref/XML-Post Processing/"+file+".xml")
-
+def extractMarkables(mention_tree):
+    """
+        Extract markables from mentions with attributes
+    """
     markables = []
-
     for coreference in mention_tree.xpath("/root/document/coreference/coreference"):
         for mention in coreference.getchildren():
             markable = createMarkable(mention_tree, mention)
             markables.append(markable)
 
+    return markables
 
-    with open('Obama.csv', 'w') as csvfile:
+
+def writeCSV_featureVector(markables):
+    """
+        Create features vectors from markables and write them in a CSV
+    """
+    with open('Barack_Obama.csv', 'w') as csvfile:
         fieldnames=['I', 'J', 'SENTENCEDIST', 'IPRONOUN', 'JPRONOUN', 'STRMATCH',
                     'SUBSTRING', 'DEF_NP', 'DEM_NP', 'HEADMATCH', 'NUMBER',
                     'SEMCLASS', 'GENDER', 'PROPERNAME', 'ALIAS', 'APPOSITIVE','COREF']
@@ -71,5 +111,19 @@ def main():
                                  'ALIAS':vector.ALIAS,
                                  'APPOSITIVE':vector.APPOSITIVE,
                                  'COREF':vector.coref})
+
+
+#Reading XML file as an argument
+#TODO : implementer la lecture d'argument correctement
+
+def main():
+
+    file = "Barack Obama"
+    path = r"../../data/WikiCoref/Output/Dcoref/XML-Post Processing/"+file+".xml"
+    mention_tree = etree.parse(path)
+    markables = getMarkables(mention_tree)
+    writeCSV_featureVector(markables)
+
+
 
 main()

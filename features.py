@@ -17,23 +17,6 @@ def getSENTENCEDIST(i, j):
     """
     return i.sentence - j.sentence
 
-
-def getMENTIONDIST(i, j):
-    """
-        Mention distance between i and j
-    """
-    return 0
-    #TODO Implement this
-
-
-def getWORDDIST(i, j):
-    """
-        Word distance between i and j
-    """
-    return 0
-    #TODO Implement this
-
-
 def getPRONOUN(i):
     """
         True if i is a Pronoun
@@ -81,8 +64,7 @@ def getNUMBER(i, j):
     """
         The two mentions have the same number
     """
-    return 0
-    #TODO Implement this
+    return (i.number == j.number)
 
 
 def getSEMCLASS(i, j):
@@ -96,8 +78,7 @@ def getGENDER(i, j):
     """
         The two mentions have the same gender
     """
-    return 0
-    #TODO Implement this
+    return (i.gender == j.gender)
 
 
 def getPROPERNAME(i, j):
