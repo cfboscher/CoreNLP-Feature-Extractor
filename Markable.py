@@ -13,8 +13,7 @@ class Markable:
         self.lemma = lemma
         self.pos = pos
         self.semantic = semantic
-        self.number = "UNKNOWN"
-        self.gender = "UNKNOWN"
+
 
 
 

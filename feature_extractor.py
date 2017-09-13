@@ -45,6 +45,7 @@ def getGender(markable):
     else:
         return "NEUTRAL"
 
+
 def createMarkable(tree, mention):
     """
         Extract Mention information from the XML file to create a Markable Object
@@ -60,7 +61,7 @@ def createMarkable(tree, mention):
                                         int(mention.find("end").text),
                                         int(mention.find("head").text),
                                         int(mention.find("sentence").text),
-                                        head.find("lemma"),
+                                        head.find("lemma").text,
                                         head.find("POS").text, head.find("NER").text)
                     markable.number = getNumber(markable)
                     markable.gender = getGender(markable)
@@ -121,7 +122,7 @@ def main():
     file = "Barack Obama"
     path = r"../../data/WikiCoref/Output/Dcoref/XML-Post Processing/"+file+".xml"
     mention_tree = etree.parse(path)
-    markables = getMarkables(mention_tree)
+    markables = extractMarkables(mention_tree)
     writeCSV_featureVector(markables)
 
 
