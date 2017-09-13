@@ -49,11 +49,11 @@ def extractMarkables(mention_tree):
     return markables
 
 
-def writeCSV_featureVector(markables):
+def writeCSV_featureVector(markables, document):
     """
         Create features vectors from markables and write them in a CSV
     """
-    with open('Barack_Obama.csv', 'w') as csvfile:
+    with open(('Output/'+document + '.csv'), 'w') as csvfile:
         fieldnames=['I', 'J', 'SENTENCEDIST', 'IPRONOUN', 'JPRONOUN', 'STRMATCH',
                     'SUBSTRING', 'DEF_NP', 'DEM_NP', 'HEADMATCH', 'NUMBER',
                     'SEMCLASS', 'GENDER', 'PROPERNAME', 'ALIAS', 'APPOSITIVE','COREF']
@@ -86,15 +86,15 @@ def writeCSV_featureVector(markables):
 
 def main():
 
-    documents = os.listdir(r"../../data/WikiCoref/Output/Dcoref/XML-Post Processing/")
+    dir_path = r"../../data/WikiCoref/Output/Dcoref/XML-Post Processing/"
+    documents = os.listdir(dir_path)
 
     for document in documents:
         print("Extracting " + document)
-        path = r"../../data/WikiCoref/Output/Dcoref/XML-Post Processing/"+document
-        mention_tree = etree.parse(path)
+        mention_tree = etree.parse(dir_path + document)
         markables = extractMarkables(mention_tree)
         # markables = markables.sort
-        writeCSV_featureVector(markables)
+        writeCSV_featureVector(markables,document)
 
 
 main()

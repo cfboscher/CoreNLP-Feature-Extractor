@@ -18,7 +18,7 @@ class Markable:
 
     def __lt__(self, other):
         return (self.sentence < other.sentence and
-                self.word_begin << other.word_begin)
+                self.word_begin < other.word_begin)
 
 
     def show(self):
