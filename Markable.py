@@ -13,9 +13,12 @@ class Markable:
         self.lemma = lemma
         self.pos = pos
         self.semantic = semantic
+        self.normalized_NER = self.semantic
 
 
-
+    def __lt__(self, other):
+        return (self.sentence < other.sentence and
+                self.word_begin << other.word_begin)
 
 
     def show(self):

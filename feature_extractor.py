@@ -1,49 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
+import os
 import sys
 import csv
 from lxml import etree
 
 from Markable import *
 from FeatureVector import *
-
-def getNumber(markable):
-    if(markable.lemma.lower() in ["I", "me","he", "she", "it", "him", "her"]):
-        return "SINGULAR"
-
-    elif(markable.lemma.lower() in ["we","us", "they", "them"]):
-        return "PLURAL"
-
-    elif(markable.mention == markable.lemma):
-        return "SINGULAR"
-
-    elif(markable.mention.replace(markable.lemma,'') in ["s", "es"]):
-        return "PLURAL"
-
-    else:
-        return "UNKNOWN"
-
-
-def getGender(markable):
-    if (markable.lemma.lower() == "she"):
-        return "FEMALE"
-    elif (markable.lemma.lower()=="he"):
-        return "MALE"
-    elif (markable.lemma.lower()=="it"):
-        return "NEUTRAL"
-    elif (markable.semantic == "PERSON"):
-        if markable.mention.split()[0].lower() in ["mr.", "sir", "mister", "sr.", "lord"]:
-            return "MALE"
-        elif markable.mention.split()[0].lower() in ["mrs.", "miss", "lady", "ms."] :
-            return "FEMALE"
-        else:
-            return "NEUTRAL"
-    elif (markable.semantic == "0"):
-        return "UNKNOWN"
-    else:
-        return "NEUTRAL"
 
 
 def createMarkable(tree, mention):
@@ -59,12 +23,15 @@ def createMarkable(tree, mention):
                     markable = Markable(mention.find("text").text,
                                         int(mention.find("start").text),
                                         int(mention.find("end").text),
-                                        int(mention.find("head").text),
+                                        head.find("word"),
                                         int(mention.find("sentence").text),
                                         head.find("lemma").text,
                                         head.find("POS").text, head.find("NER").text)
                     markable.number = getNumber(markable)
                     markable.gender = getGender(markable)
+
+                    if (markable.semantic == "DATE"):
+                        markable.normalized_NER = head.find("NormalizedNER").text
 
                     return markable
 
@@ -119,12 +86,15 @@ def writeCSV_featureVector(markables):
 
 def main():
 
-    file = "Barack Obama"
-    path = r"../../data/WikiCoref/Output/Dcoref/XML-Post Processing/"+file+".xml"
-    mention_tree = etree.parse(path)
-    markables = extractMarkables(mention_tree)
-    writeCSV_featureVector(markables)
+    documents = os.listdir(r"../../data/WikiCoref/Output/Dcoref/XML-Post Processing/")
 
+    for document in documents:
+        print("Extracting " + document)
+        path = r"../../data/WikiCoref/Output/Dcoref/XML-Post Processing/"+document
+        mention_tree = etree.parse(path)
+        markables = extractMarkables(mention_tree)
+        # markables = markables.sort
+        writeCSV_featureVector(markables)
 
 
 main()

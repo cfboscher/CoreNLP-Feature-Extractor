@@ -11,11 +11,68 @@ def removeArticles(text):
     return result
 
 
+def getAcronym(text):
+    """
+        Returns the acronym of an Organization name
+    """
+
+    removables = ["corp.", "ltd."]
+    text = text.split()
+    text = [word for word in text if word.lower() not in removables ]
+
+    acronym = [word[0].upper() for word in text]
+
+    acronym = ''.join(acronym)
+    period_acronym = '.'.join(acronym) + '.'
+
+    return acronym, period_acronym
+
+
+def getNumber(markable):
+    """
+        Returns the number of a markable
+    """
+    if(markable.lemma.lower() in ["I", "me","he", "she", "it", "him", "her"]):
+        return "SINGULAR"
+    elif(markable.lemma.lower() in ["we","us", "they", "them"]):
+        return "PLURAL"
+    elif(markable.mention == markable.lemma):
+        return "SINGULAR"
+    elif(markable.mention.replace(markable.lemma,'') in ["s", "es"]):
+        return "PLURAL"
+    else:
+        return "UNKNOWN"
+
+
+def getGender(markable):
+    """
+        Returns the gender of a markable
+    """
+    if (markable.lemma.lower() == "she"):
+        return "FEMALE"
+    elif (markable.lemma.lower()=="he"):
+        return "MALE"
+    elif (markable.lemma.lower()=="it"):
+        return "NEUTRAL"
+    elif (markable.semantic == "PERSON"):
+        if markable.mention.split()[0].lower() in ["mr.", "sir", "mister", "sr.", "lord"]:
+            return "MALE"
+        elif markable.mention.split()[0].lower() in ["mrs.", "miss", "lady", "ms."] :
+            return "FEMALE"
+        else:
+            return "NEUTRAL"
+    elif (markable.semantic == "0"):
+        return "UNKNOWN"
+    else:
+        return "NEUTRAL"
+
+
 def getSENTENCEDIST(i, j):
     """
         Sentence distance between i and j
     """
-    return i.sentence - j.sentence
+    return abs(i.sentence - j.sentence)
+
 
 def getPRONOUN(i):
     """
@@ -64,7 +121,7 @@ def getNUMBER(i, j):
     """
         The two mentions have the same number
     """
-    return (i.number == j.number)
+    return (i.number == j.number and i.number != "UNKNOWN")
 
 
 def getSEMCLASS(i, j):
@@ -78,7 +135,7 @@ def getGENDER(i, j):
     """
         The two mentions have the same gender
     """
-    return (i.gender == j.gender)
+    return (i.gender == j.gender and i.gender != "UNKNOWN" )
 
 
 def getPROPERNAME(i, j):
@@ -92,13 +149,19 @@ def getALIAS(i,j):
     """
         One mention is an alias of the other
     """
-    #TODO Implement this
-    return 0
-
+    if (i.semantic == j.semantic):
+        if (i.semantic == "DATE") :
+            return (i.normalized_NER == j.normalized_NER)
+        elif(i.semantic == "PERSON"):
+            return (i.head == j.head)
+        elif (i.semantic == "ORGANIZATION"):
+            return (i.mention in getAcronym(j.mention) or
+                    j.mention in getAcronym(i.mention))
+    else:
+        return False
 
 def getAPPOSITIVE(i,j):
     """
         One mention is an apposition of the other
     """
-    #TODO Implement this
     return 0
