@@ -53,7 +53,7 @@ def writeCSV_featureVector(markables, document):
     """
         Create features vectors from markables and write them in a CSV
     """
-    with open(('Output/'+document + '.csv'), 'w') as csvfile:
+    with open(('Output/'+document.replace('.xml', '' )+'.csv'), 'w') as csvfile:
         fieldnames=['I', 'J', 'SENTENCEDIST', 'IPRONOUN', 'JPRONOUN', 'STRMATCH',
                     'SUBSTRING', 'DEF_NP', 'DEM_NP', 'HEADMATCH', 'NUMBER',
                     'SEMCLASS', 'GENDER', 'PROPERNAME', 'ALIAS', 'APPOSITIVE','COREF']
@@ -63,7 +63,8 @@ def writeCSV_featureVector(markables, document):
         for i in range(len(markables)-1):
             for j in range(i+1, len(markables)):
                 vector = FeatureVector(markables[i], markables[j])
-                writer.writerow({'I':vector.i.mention, 'J':vector.j.mention,
+                writer.writerow({'I':vector.i.mention,
+                                 'J':vector.j.mention,
                                  'SENTENCEDIST':vector.SENTENCEDIST,
                                  'IPRONOUN':vector.IPRONOUN,
                                  'JPRONOUN':vector.JPRONOUN,
