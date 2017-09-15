@@ -14,6 +14,8 @@ class Markable:
         self.pos = pos
         self.semantic = semantic
         self.normalized_NER = self.semantic
+        self.number = 'UNKNOWN'
+        self.gender = 'UNKNOWN'
 
 
     def __lt__(self, other):

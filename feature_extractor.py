@@ -41,11 +41,13 @@ def extractMarkables(mention_tree):
         Extract markables from mentions with attributes
     """
     markables = []
+    coref_index=0
     for coreference in mention_tree.xpath("/root/document/coreference/coreference"):
         for mention in coreference.getchildren():
             markable = createMarkable(mention_tree, mention)
+            markable.coref_group = coref_index
             markables.append(markable)
-
+        coref_index+=1
     return markables
 
 
@@ -53,7 +55,12 @@ def writeCSV_featureVector(markables, document):
     """
         Create features vectors from markables and write them in a CSV
     """
-    with open(('Output/'+document.replace('.xml', '' )+'.csv'), 'w') as csvfile:
+
+    if sys.argv[1]=='train':
+        directory = 'Output/train/'
+    else:
+        directory = 'Output/test/'
+    with open((directory+document.replace('.xml', '' )+'.csv'), 'w') as csvfile:
         fieldnames=['I', 'J', 'SENTENCEDIST', 'IPRONOUN', 'JPRONOUN', 'STRMATCH',
                     'SUBSTRING', 'DEF_NP', 'DEM_NP', 'HEADMATCH', 'NUMBER',
                     'SEMCLASS', 'GENDER', 'PROPERNAME', 'ALIAS', 'APPOSITIVE','COREF']
@@ -79,11 +86,8 @@ def writeCSV_featureVector(markables, document):
                                  'PROPERNAME':vector.PROPERNAME,
                                  'ALIAS':vector.ALIAS,
                                  'APPOSITIVE':vector.APPOSITIVE,
-                                 'COREF':vector.coref})
+                                 'COREF':vector.COREF})
 
-
-#Reading XML file as an argument
-#TODO : implementer la lecture d'argument correctement
 
 def main():
 

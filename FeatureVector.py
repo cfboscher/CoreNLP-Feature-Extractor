@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from features import *
+import sys
 
 class FeatureVector:
     """
@@ -25,4 +26,8 @@ class FeatureVector:
         self.PROPERNAME = getPROPERNAME(i, j)
         self.ALIAS = getALIAS(i, j)
         self.APPOSITIVE = getAPPOSITIVE(i,j)
-        self.coref = False
+
+        if sys.argv[1] == 'train':
+            self.COREF = getCOREF(i,j)
+        else:
+            self.COREF =''

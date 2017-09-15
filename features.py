@@ -145,7 +145,7 @@ def getPROPERNAME(i, j):
     return (i.pos=="NNP" and j.pos=="NNP")
 
 
-def getALIAS(i,j):
+def getALIAS(i, j):
     """
         One mention is an alias of the other
     """
@@ -158,10 +158,18 @@ def getALIAS(i,j):
             return (i.mention in getAcronym(j.mention) or
                     j.mention in getAcronym(i.mention))
     else:
-        return False
+        return (2==3)
 
-def getAPPOSITIVE(i,j):
+def getAPPOSITIVE(i, j):
     """
         One mention is an apposition of the other
     """
+    #TODO Implement this
     return 0
+
+
+def getCOREF(i, j):
+    """
+        Both mentions are coreferent
+    """
+    return i.coref_group == j.coref_group
