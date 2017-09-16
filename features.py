@@ -157,8 +157,10 @@ def getALIAS(i, j):
         elif (i.semantic == "ORGANIZATION"):
             return (i.mention in getAcronym(j.mention) or
                     j.mention in getAcronym(i.mention))
+        else:
+            return False
     else:
-        return (2==3)
+        return False
 
 def getAPPOSITIVE(i, j):
     """
