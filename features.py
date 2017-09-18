@@ -162,6 +162,7 @@ def getALIAS(i, j):
     else:
         return False
 
+
 def getAPPOSITIVE(i, j):
     """
         One mention is an apposition of the other

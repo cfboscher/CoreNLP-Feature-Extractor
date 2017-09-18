@@ -27,7 +27,7 @@ class FeatureVector:
         self.ALIAS = getALIAS(i, j)
         self.APPOSITIVE = getAPPOSITIVE(i,j)
 
-        if sys.argv[1] == 'train':
+        if len(sys.argv) > 1 and sys.argv[1] == 'train':
             self.COREF = getCOREF(i,j)
         else:
             self.COREF =''
