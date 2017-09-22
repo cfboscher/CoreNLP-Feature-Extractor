@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+
 def removeArticles(text):
-    stopwords = ['the','a','an','this','that','these','those']
+    stopwords = ['the', 'a', 'an', 'this', 'that', 'these', 'those']
     textwords = text.split()
 
-    resultwords  = [word for word in textwords if word.lower() not in stopwords]
+    resultwords = [word for word in textwords if word.lower() not in stopwords]
     result = ' '.join(resultwords)
 
     return result
@@ -18,7 +19,7 @@ def getAcronym(text):
 
     removables = ["corp.", "ltd."]
     text = text.split()
-    text = [word for word in text if word.lower() not in removables ]
+    text = [word for word in text if word.lower() not in removables]
 
     acronym = [word[0].upper() for word in text]
 
@@ -32,13 +33,13 @@ def getNumber(markable):
     """
         Returns the number of a markable
     """
-    if(markable.lemma.lower() in ["I", "me","he", "she", "it", "him", "her"]):
+    if(markable.lemma.lower() in ["I", "me", "he", "she", "it", "him", "her"]):
         return "SINGULAR"
-    elif(markable.lemma.lower() in ["we","us", "they", "them"]):
+    elif(markable.lemma.lower() in ["we", "us", "they", "them"]):
         return "PLURAL"
     elif(markable.mention == markable.lemma):
         return "SINGULAR"
-    elif(markable.mention.replace(markable.lemma,'') in ["s", "es"]):
+    elif(markable.mention.replace(markable.lemma, '') in ["s", "es"]):
         return "PLURAL"
     else:
         return "UNKNOWN"
@@ -50,19 +51,28 @@ def getGender(markable):
     """
     if (markable.lemma.lower() == "she"):
         return "FEMALE"
-    elif (markable.lemma.lower()=="he"):
+
+    elif (markable.lemma.lower() == "he"):
         return "MALE"
-    elif (markable.lemma.lower()=="it"):
+
+    elif (markable.lemma.lower() == "it"):
         return "NEUTRAL"
+
     elif (markable.semantic == "PERSON"):
-        if markable.mention.split()[0].lower() in ["mr.", "sir", "mister", "sr.", "lord"]:
+        if markable.mention.split()[0].lower() in ["mr.", "sir", "mister",
+                                                   "sr.", "lord"]:
             return "MALE"
-        elif markable.mention.split()[0].lower() in ["mrs.", "miss", "lady", "ms."] :
+
+        elif markable.mention.split()[0].lower() in ["mrs.", "miss", "lady",
+                                                     "ms."]:
             return "FEMALE"
+
         else:
             return "NEUTRAL"
+
     elif (markable.semantic == "0"):
         return "UNKNOWN"
+
     else:
         return "NEUTRAL"
 
@@ -78,7 +88,7 @@ def getPRONOUN(i):
     """
         True if i is a Pronoun
     """
-    return (i.pos=="PRP")
+    return (i.pos == "PRP")
 
 
 def getSTRMATCH(i, j):
@@ -135,14 +145,14 @@ def getGENDER(i, j):
     """
         The two mentions have the same gender
     """
-    return (i.gender == j.gender and i.gender != "UNKNOWN" )
+    return (i.gender == j.gender and i.gender != "UNKNOWN")
 
 
 def getPROPERNAME(i, j):
     """
         Both mentions are proper names
     """
-    return (i.pos=="NNP" and j.pos=="NNP")
+    return (i.pos == "NNP" and j.pos == "NNP")
 
 
 def getALIAS(i, j):
@@ -150,7 +160,7 @@ def getALIAS(i, j):
         One mention is an alias of the other
     """
     if (i.semantic == j.semantic):
-        if (i.semantic == "DATE") :
+        if (i.semantic == "DATE"):
             return (i.normalized_NER == j.normalized_NER)
         elif(i.semantic == "PERSON"):
             return (i.head == j.head)
@@ -167,12 +177,15 @@ def getAPPOSITIVE(i, j):
     """
         One mention is an apposition of the other
     """
-    #TODO Implement this
-    return 0
+
+    return (i.word_end == ',' and i.nb_end+1 == j.nb_begin)
 
 
 def getCOREF(i, j):
     """
         Both mentions are coreferent
     """
-    return i.coref_group == j.coref_group
+    if i.coref_group == j.coref_group:
+        return 'COREF'
+    else:
+        return 'NO COREF'

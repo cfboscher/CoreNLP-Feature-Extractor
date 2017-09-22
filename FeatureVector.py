@@ -24,10 +24,6 @@ class FeatureVector:
         self.SEMCLASS = getSEMCLASS(i, j)
         self.GENDER = getGENDER(i, j)
         self.PROPERNAME = getPROPERNAME(i, j)
+        self.APPOSITIVE = getAPPOSITIVE(i, j) or getAPPOSITIVE(j, i)
         self.ALIAS = getALIAS(i, j)
-        self.APPOSITIVE = getAPPOSITIVE(i,j)
-
-        if len(sys.argv) > 1 and sys.argv[1] == 'train':
-            self.COREF = getCOREF(i,j)
-        else:
-            self.COREF =''
+        self.COREF = getCOREF(i,j)
