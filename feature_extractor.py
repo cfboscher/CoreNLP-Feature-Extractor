@@ -60,7 +60,8 @@ def extractMarkables(mention_tree):
     """
     markables = []
     coref_index = 0
-    for coreference in mention_tree.xpath("/root/document/coreference/coreference"):
+    coref_path = "/root/document/coreference/coreference"
+    for coreference in mention_tree.xpath(coref_path):
         for mention in coreference.getchildren():
             markable = createMarkable(mention_tree, mention)
             markable.coref_group = coref_index
@@ -127,7 +128,8 @@ def writeCSV_Markables(markables, document):
     """
 
     directory = 'Output/Markables/'
-    with open((directory+document.replace('.xml', '')+'_Markables.csv'), 'w') as csvfile:
+    with open((directory+document.replace('.xml', '') +
+               '_Markables.csv'), 'w') as csvfile:
 
         fieldnames = ['LABEL', 'SENTENCE', 'BEGIN', 'END', 'HEAD', 'SENTENCE',
                       'LEMMA', 'POS', 'SEMANTIC', 'NORMALIZED_NER', 'GENDER',
@@ -162,7 +164,7 @@ def mergeCSV_Corpus():
     merged.to_csv("output.csv", index=False)
 
 
-def main():
+if __name__=="__main__":
 
     dir_path = r"../../data/WikiCoref/Output/Dcoref/XML-Post Processing/"
     documents = os.listdir(dir_path)
@@ -179,6 +181,3 @@ def main():
         # Create Feature vectors from markables
         vectors = extractVectors(markables)
         writeCSV_featureVector(vectors, document)
-
-
-main()

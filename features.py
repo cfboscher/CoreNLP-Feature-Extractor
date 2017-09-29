@@ -59,14 +59,14 @@ def getGender(markable):
         return "NEUTRAL"
 
     elif (markable.semantic == "PERSON"):
-        if markable.mention.split()[0].lower() in ["mr.", "sir", "mister",
-                                                   "sr.", "lord"]:
+
+        male_words = ["mr.", "sir", "mister", "sr.", "lord"]
+        female_words = ["mrs.", "miss", "lady", "ms."]
+
+        if markable.mention.split()[0].lower() in male_words:
             return "MALE"
-
-        elif markable.mention.split()[0].lower() in ["mrs.", "miss", "lady",
-                                                     "ms."]:
+        elif markable.mention.split()[0].lower() in female_words:
             return "FEMALE"
-
         else:
             return "NEUTRAL"
 
